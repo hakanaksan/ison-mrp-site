@@ -1,0 +1,4 @@
+Bu klasore kurulum dosyasini koyun:
+  ISON-MRP-Setup.exe  (tools\pack-installer.ps1 ciktisi — surum numarasiz ADLA yeniden adlandirin)
+
+Sitedeki "Indir" butonu indir/ISON-MRP-Setup.exe adresine isaret eder.

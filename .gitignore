@@ -1,0 +1,7 @@
+# OS / editör
+.DS_Store
+Thumbs.db
+*.swp
+
+# Vercel yerel
+.vercel/
