@@ -9,9 +9,6 @@ tek CSS dosyası, sistem yazı yığını. Vercel'de barındırılır.
 index.html          # tek sayfa (hero + özellikler + ekran vitrini + ETA + indirme)
 site.css            # tüm stiller (açık zemin + #0a84ff mavi, macOS-vari)
 img/                # ekran görüntüleri + logolar (ekran-*.png, isoncloud.png, etasql.png)
-indir/
-  OKUBENI.txt       # kurulum yönergesi
-  ISON-MRP-Setup.exe  # ← kurulum paketi buraya konmalı (repoda YOK; aşağıya bak)
 vercel.json         # asset cache + güvenlik başlıkları (statik, framework yok)
 ```
 
@@ -32,12 +29,19 @@ python -m http.server 8080
 
 ## Kurulum paketi (setup.exe) linki
 
-`index.html` içindeki indirme butonu `indir/ISON-MRP-Setup.exe`'ye işaret eder.
-Paket ~41 MB olduğundan iki seçenek:
+İndirme butonu şu **GitHub Release asset** URL'sine işaret eder (repo şişmez, link hep aynı kalır):
 
-1. **Repoya koy**: `indir/ISON-MRP-Setup.exe` olarak commit et → Vercel doğrudan sunar (basit ama repo şişer).
-2. **GitHub Release'ten sun** (önerilen): setup.exe'yi bu reponun bir Release'ine yükle,
-   `index.html`'deki linki release asset URL'siyle değiştir (repo hafif kalır).
+```
+https://github.com/hakanaksan/ison-mrp-site/releases/latest/download/ISON-MRP-Setup.exe
+```
+
+`releases/latest/download/...` daima **en yeni release**'in bu adlı asset'ini verir — yeni
+sürüm yayınlandığında sitedeki linki değiştirmeye gerek yok.
+
+**Yeni sürüm yayınlama:** bu repoda bir Release oluştur (ör. tag `v0.1.0`), kurulum paketini
+**tam olarak `ISON-MRP-Setup.exe`** adıyla asset olarak yükle. Repo public olduğundan indirme
+auth istemez. (Paket `tools/pack-installer.ps1` ile ana repoda üretilir:
+`release\installer-stage\installer-out\ISON-MRP-Setup-<v>.exe` → yüklerken `ISON-MRP-Setup.exe`'ye adlandır.)
 
 Ana uygulama (kaynak/kurulum üretimi) AYRI repodadır: `hakanaksan/ison-mrp`.
 Bu repo YALNIZCA tanıtım sitesidir — site güncellemeleri buraya yapılır.
