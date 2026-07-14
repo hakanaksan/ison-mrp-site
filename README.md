@@ -38,10 +38,19 @@ https://github.com/hakanaksan/ison-mrp-site/releases/latest/download/ISON-MRP-Se
 `releases/latest/download/...` daima **en yeni release**'in bu adlı asset'ini verir — yeni
 sürüm yayınlandığında sitedeki linki değiştirmeye gerek yok.
 
-**Yeni sürüm yayınlama:** bu repoda bir Release oluştur (ör. tag `v0.1.0`), kurulum paketini
-**tam olarak `ISON-MRP-Setup.exe`** adıyla asset olarak yükle. Repo public olduğundan indirme
-auth istemez. (Paket `tools/pack-installer.ps1` ile ana repoda üretilir:
-`release\installer-stage\installer-out\ISON-MRP-Setup-<v>.exe` → yüklerken `ISON-MRP-Setup.exe`'ye adlandır.)
+**Yeni sürüm yayınlama (otomatik — önerilen):** ana repoda (`hakanaksan/ison-mrp`) tek komut:
+
+```powershell
+.\tools\publish-release.ps1 -Version 0.1.1 -Notes "Yenilikler..."
+```
+
+Bu; setup.exe'yi derler, imzalı `.isonupd`'yi üretir ve **her iki** repoya (bu site reposu +
+`ison-mrp-releases`) release oluşturup asset'leri yükler. Site tarafında paketi otomatik olarak
+`ISON-MRP-Setup.exe` adıyla en yeni release'e koyar → yukarıdaki link anında canlanır.
+(PAT gerekir: Fine-grained, Contents: Read and write; iki repo. Ayrıntı: ana repo CLAUDE.md.)
+
+**Elle yükleme (yedek):** bu repoda Release oluştur (tag `v0.1.x`), paketi **tam olarak
+`ISON-MRP-Setup.exe`** adıyla asset olarak yükle.
 
 Ana uygulama (kaynak/kurulum üretimi) AYRI repodadır: `hakanaksan/ison-mrp`.
 Bu repo YALNIZCA tanıtım sitesidir — site güncellemeleri buraya yapılır.
