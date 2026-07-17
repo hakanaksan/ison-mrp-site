@@ -70,13 +70,15 @@ Redis, MARKETPLACE üzerinden gelir. İki yol (B daha garantili):
    olabilir — api fonksiyonları İKİSİNİ de tanır).
 
 **Yol B — doğrudan upstash.com (Vercel arayüzünden bağımsız, her zaman çalışır):**
-1. upstash.com → ücretsiz hesap (GitHub ile) → Create Database (Redis, Regional, en yakın bölge).
-2. DB sayfasında **REST API** bölümünden  ve    değerlerini kopyala.
+1. upstash.com → ücretsiz hesap (GitHub ile giriş olur) → Create Database (Redis, Regional, en yakın bölge — ör. eu-central).
+2. DB sayfasında **REST API** bölümünden `UPSTASH_REDIS_REST_URL` ve `UPSTASH_REDIS_REST_TOKEN` değerlerini kopyala.
 3. Vercel → proje → Settings → Environment Variables → bu iki değişkeni ekle (Production).
 
 **Her iki yolda da devamı:**
-4. Aynı yerde  env'i ekle — uzun rastgele değer üretmek için:
-   5. Env değişiklikleri YENİ deploy ister: Deployments → son deploy → ⋯ → **Redeploy**.
-6. Doğrulama:  →  dönmeli.
-7. Okuma: geliştirme makinesinde  env'ine aynı değeri koy →
-    indirme sayılarının yanına deneme/aktivasyon sayılarını da basar.
+
+4. Aynı yerde `STATS_KEY` env'i ekle — uzun rastgele değer üretmek için:
+   `node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"`
+5. Env değişiklikleri YENİ deploy ister: Deployments → son deploy → ⋯ → **Redeploy**.
+6. Doğrulama: `https://mrp.ison.tr/api/stats?key=<STATS_KEY>` → `"configured":true` dönmeli.
+7. Okuma: geliştirme makinesinde `ISON_TELEMETRY_STATS_KEY` env'ine aynı değeri koy →
+   `node tools/stats.mjs` (ana repo) indirme sayılarının yanına deneme/aktivasyon sayılarını da basar.
