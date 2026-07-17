@@ -60,10 +60,23 @@ Bu repo YALNIZCA tanıtım sitesidir — site güncellemeleri buraya yapılır.
 `api/event.js` (uygulama sunucuları POST eder) + `api/stats.js` (satıcı okur). Kişisel veri yok:
 makine hash'i + sürüm + tarih. Depo bağlanana kadar uçlar zarif no-op (istemci asla etkilenmez).
 
-Kurulum (tek seferlik, Vercel panelinden):
-1. Vercel → Storage → **Upstash Redis** oluştur ve projeye bağla (env'ler otomatik gelir:
-   `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`).
-2. Vercel → Settings → Environment Variables → `STATS_KEY` = uzun rastgele bir değer
-   (okuma ucunun şifresi).
-3. Okuma: `web/tools/stats.mjs` — geliştirme makinesinde `ISON_TELEMETRY_STATS_KEY` env'ine
-   aynı değeri koy; script indirme sayılarının yanına deneme/aktivasyon sayılarını da basar.
+Kurulum (tek seferlik). Vercel'in Storage sekmesi artık yalnız Edge Config + Blob gösteriyor —
+Redis, MARKETPLACE üzerinden gelir. İki yol (B daha garantili):
+
+**Yol A — Vercel Marketplace:**
+1. vercel.com → proje → Storage → (Marketplace bölümü / "Browse Marketplace") → "Upstash" ara →
+   **Upstash for Redis** → ücretsiz plan → projeye bağla (Connect Project: ison-mrp-site).
+2. Env'ler otomatik eklenir (adlar KV_REST_API_URL/KV_REST_API_TOKEN ya da UPSTASH_REDIS_REST_URL/TOKEN
+   olabilir — api fonksiyonları İKİSİNİ de tanır).
+
+**Yol B — doğrudan upstash.com (Vercel arayüzünden bağımsız, her zaman çalışır):**
+1. upstash.com → ücretsiz hesap (GitHub ile) → Create Database (Redis, Regional, en yakın bölge).
+2. DB sayfasında **REST API** bölümünden  ve    değerlerini kopyala.
+3. Vercel → proje → Settings → Environment Variables → bu iki değişkeni ekle (Production).
+
+**Her iki yolda da devamı:**
+4. Aynı yerde  env'i ekle — uzun rastgele değer üretmek için:
+   5. Env değişiklikleri YENİ deploy ister: Deployments → son deploy → ⋯ → **Redeploy**.
+6. Doğrulama:  →  dönmeli.
+7. Okuma: geliştirme makinesinde  env'ine aynı değeri koy →
+    indirme sayılarının yanına deneme/aktivasyon sayılarını da basar.

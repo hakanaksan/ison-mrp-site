@@ -6,8 +6,10 @@ const ALLOWED_EVENTS = new Set(['trial_started', 'license_activated']);
 const MACHINE_RE = /^([A-F0-9]{4}-){3}[A-F0-9]{4}$|^\*$/i;
 
 async function upstash(commands) {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  // İki bağlama yolunun env adları da tanınır: doğrudan Upstash (UPSTASH_REDIS_REST_*) ya da
+  // Vercel Marketplace 'Upstash for Redis' entegrasyonu (KV_REST_API_*).
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   if (!url || !token) return null;
   const response = await fetch(`${url}/pipeline`, {
     method: 'POST',

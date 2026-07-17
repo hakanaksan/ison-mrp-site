@@ -2,8 +2,10 @@
 // Koruma: env STATS_KEY ile ?key= eşleşmeli (anahtar yoksa uç kapalı — 404).
 // Tüketici: web/tools/stats.mjs (ISON_TELEMETRY_STATS_KEY env'i aynı değerle).
 async function upstash(commands) {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  // İki bağlama yolunun env adları da tanınır: doğrudan Upstash (UPSTASH_REDIS_REST_*) ya da
+  // Vercel Marketplace 'Upstash for Redis' entegrasyonu (KV_REST_API_*).
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   if (!url || !token) return null;
   const response = await fetch(`${url}/pipeline`, {
     method: 'POST',
