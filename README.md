@@ -55,30 +55,24 @@ Bu; setup.exe'yi derler, imzalı `.isonupd`'yi üretir ve **her iki** repoya (bu
 Ana uygulama (kaynak/kurulum üretimi) AYRI repodadır: `hakanaksan/ison-mrp`.
 Bu repo YALNIZCA tanıtım sitesidir — site güncellemeleri buraya yapılır.
 
-## Telemetri (deneme/aktivasyon takibi, 2026-07-16)
+## Telemetri (deneme/aktivasyon takibi, 2026-07-16 — depo: GitHub .txt)
 
-`api/event.js` (uygulama sunucuları POST eder) + `api/stats.js` (satıcı okur). Kişisel veri yok:
-makine hash'i + sürüm + tarih. Depo bağlanana kadar uçlar zarif no-op (istemci asla etkilenmez).
+`api/event.js`: uygulama sunucuları deneme/aktivasyon olayını buraya POST eder. Kişisel veri yok:
+makine hash'i + sürüm + tarih. Depo = **GitHub'daki özel repoda düz metin dosyası**
+(`hakanaksan/ison-telemetry` → `events.txt`, satır başına bir JSON olay) — Upstash/Redis gibi ekstra
+servis YOK. Depo bağlanana kadar uç zarif no-op (`stored:false`; istemci asla etkilenmez).
 
-Kurulum (tek seferlik). Vercel'in Storage sekmesi artık yalnız Edge Config + Blob gösteriyor —
-Redis, MARKETPLACE üzerinden gelir. İki yol (B daha garantili):
+Kurulum (tek seferlik, ~3 dk — hepsi GitHub + Vercel içinde):
 
-**Yol A — Vercel Marketplace:**
-1. vercel.com → proje → Storage → (Marketplace bölümü / "Browse Marketplace") → "Upstash" ara →
-   **Upstash for Redis** → ücretsiz plan → projeye bağla (Connect Project: ison-mrp-site).
-2. Env'ler otomatik eklenir (adlar KV_REST_API_URL/KV_REST_API_TOKEN ya da UPSTASH_REDIS_REST_URL/TOKEN
-   olabilir — api fonksiyonları İKİSİNİ de tanır).
-
-**Yol B — doğrudan upstash.com (Vercel arayüzünden bağımsız, her zaman çalışır):**
-1. upstash.com → ücretsiz hesap (GitHub ile giriş olur) → Create Database (Redis, Regional, en yakın bölge — ör. eu-central).
-2. DB sayfasında **REST API** bölümünden `UPSTASH_REDIS_REST_URL` ve `UPSTASH_REDIS_REST_TOKEN` değerlerini kopyala.
-3. Vercel → proje → Settings → Environment Variables → bu iki değişkeni ekle (Production).
-
-**Her iki yolda da devamı:**
-
-4. Aynı yerde `STATS_KEY` env'i ekle — uzun rastgele değer üretmek için:
-   `node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"`
-5. Env değişiklikleri YENİ deploy ister: Deployments → son deploy → ⋯ → **Redeploy**.
-6. Doğrulama: `https://mrp.ison.tr/api/stats?key=<STATS_KEY>` → `"configured":true` dönmeli.
-7. Okuma: geliştirme makinesinde `ISON_TELEMETRY_STATS_KEY` env'ine aynı değeri koy →
-   `node tools/stats.mjs` (ana repo) indirme sayılarının yanına deneme/aktivasyon sayılarını da basar.
+1. **Özel repo aç**: github.com/new → ad `ison-telemetry` → **Private** → Create.
+   (Boş kalabilir — ilk olay `events.txt`'yi kendisi oluşturur.)
+2. **Yazma token'ı üret**: GitHub → Settings → Developer settings → **Fine-grained tokens** →
+   Generate new token → Repository access: *Only select repositories* → `ison-telemetry` →
+   Permissions → **Contents: Read and write** → üret, değeri kopyala.
+   (Token YALNIZ bu repoya yazabilir — sızsa bile başka hiçbir şeye erişemez.)
+3. **Vercel'e koy**: vercel.com → ison-mrp-site projesi → Settings → Environment Variables →
+   `TELEMETRY_GITHUB_TOKEN` = token değeri (Production).
+4. **Redeploy**: env değişikliği yeni deploy ister — Deployments → son deploy → ⋯ → Redeploy.
+5. **Doğrulama**: bir olay geldiğinde `ison-telemetry` reposunda `events.txt` belirir; github.com'dan
+   çıplak gözle okunur. Sayılar için ana repoda `node tools/stats.mjs` (indirme sayılarının yanına
+   deneme/aktivasyon özetini de basar; kimlik Git Credential Manager'dan otomatik — ekstra env gerekmez).
