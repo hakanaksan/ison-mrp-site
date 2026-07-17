@@ -11,8 +11,8 @@ const REPO = process.env.TELEMETRY_REPO || 'hakanaksan/ison-telemetry';
 const FILE_PATH = 'events.txt';
 
 async function githubAppend(line) {
-  const token = process.env.TELEMETRY_GITHUB_TOKEN;
-  if (!token) return false;
+  const token = (process.env.TELEMETRY_GITHUB_TOKEN || '').trim();
+  if (!token) { const err = new Error('TELEMETRY_GITHUB_TOKEN env boş'); err.reason = 'NO_TOKEN'; throw err; }
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
@@ -66,6 +66,8 @@ module.exports = async (req, res) => {
     res.status(200).json({ ok: true, stored });
   } catch (error) {
     // Depo hatası istemciyi ilgilendirmez — istemci zaten fire-and-forget.
-    res.status(200).json({ ok: true, stored: false });
+    // ?debug=1 ile neden görünür (yalnız durum kodu/kısa mesaj — sır içermez).
+    const debug = String((req.query || {}).debug || '') === '1';
+    res.status(200).json({ ok: true, stored: false, ...(debug ? { reason: error.reason || error.message || 'bilinmiyor' } : {}) });
   }
 };
