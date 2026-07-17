@@ -54,3 +54,16 @@ Bu; setup.exe'yi derler, imzalı `.isonupd`'yi üretir ve **her iki** repoya (bu
 
 Ana uygulama (kaynak/kurulum üretimi) AYRI repodadır: `hakanaksan/ison-mrp`.
 Bu repo YALNIZCA tanıtım sitesidir — site güncellemeleri buraya yapılır.
+
+## Telemetri (deneme/aktivasyon takibi, 2026-07-16)
+
+`api/event.js` (uygulama sunucuları POST eder) + `api/stats.js` (satıcı okur). Kişisel veri yok:
+makine hash'i + sürüm + tarih. Depo bağlanana kadar uçlar zarif no-op (istemci asla etkilenmez).
+
+Kurulum (tek seferlik, Vercel panelinden):
+1. Vercel → Storage → **Upstash Redis** oluştur ve projeye bağla (env'ler otomatik gelir:
+   `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`).
+2. Vercel → Settings → Environment Variables → `STATS_KEY` = uzun rastgele bir değer
+   (okuma ucunun şifresi).
+3. Okuma: `web/tools/stats.mjs` — geliştirme makinesinde `ISON_TELEMETRY_STATS_KEY` env'ine
+   aynı değeri koy; script indirme sayılarının yanına deneme/aktivasyon sayılarını da basar.
