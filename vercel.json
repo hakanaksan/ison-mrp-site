@@ -1,7 +1,21 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "trailingSlash": false,
+  "trailingSlash": true,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://ison-mrp-portal.vercel.app/api/:path*"
+    },
+    {
+      "source": "/lisans",
+      "destination": "https://ison-mrp-portal.vercel.app/"
+    },
+    {
+      "source": "/lisans/:path*",
+      "destination": "https://ison-mrp-portal.vercel.app/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/img/(.*)",
